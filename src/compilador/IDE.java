@@ -20,7 +20,7 @@ public class IDE extends javax.swing.JFrame {
      */
     public IDE() {
         initComponents();
-        setTitle("Proyecto Final - Compilador");
+        setTitle("Proyecto Final - Compilador LyA II");
         setResizable(false);
         setLocationRelativeTo(null);
         Functions.setLineNumberOnJTextComponent(jTextCodigoEntrada); //Añadimos NO. de lineas al Campo de Codigo de entrada
