@@ -59,6 +59,7 @@ public class IDE extends javax.swing.JFrame {
         ManualUsuario = new javax.swing.JMenuItem();
         Documentacion = new javax.swing.JMenuItem();
         About = new javax.swing.JMenu();
+        Integrantes = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -164,6 +165,15 @@ public class IDE extends javax.swing.JFrame {
         Menu.add(MenuAyuda);
 
         About.setText("Acerca de");
+
+        Integrantes.setText("Integrantes");
+        Integrantes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IntegrantesActionPerformed(evt);
+            }
+        });
+        About.add(Integrantes);
+
         Menu.add(About);
 
         setJMenuBar(Menu);
@@ -307,6 +317,12 @@ public class IDE extends javax.swing.JFrame {
         System.out.println("Bienvenido a Analisis Semantico");
     }//GEN-LAST:event_btnSemanticoActionPerformed
 
+    private void IntegrantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IntegrantesActionPerformed
+        Integrantes aux= new Integrantes();
+        aux.setVisible(true); 
+        this.dispose();
+    }//GEN-LAST:event_IntegrantesActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -349,6 +365,7 @@ public class IDE extends javax.swing.JFrame {
     private javax.swing.JLabel IMGTecCelaya;
     private javax.swing.JLabel IMGTecnm;
     private javax.swing.JLabel Identificadores;
+    private javax.swing.JMenuItem Integrantes;
     private javax.swing.JMenuItem ManualUsuario;
     private javax.swing.JMenuBar Menu;
     private javax.swing.JMenu MenuArchivos;
