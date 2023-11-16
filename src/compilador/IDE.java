@@ -4,6 +4,7 @@
  */
 package compilador;
 
+import compilerTools.Directory;
 import compilerTools.Functions;
 import java.awt.Desktop;
 import java.io.File;
@@ -14,7 +15,7 @@ import java.io.IOException;
  * @author Franco - PC
  */
 public class IDE extends javax.swing.JFrame {
-
+    private Directory directorio;
     /**
      * Creates new form IDE
      */
@@ -24,6 +25,8 @@ public class IDE extends javax.swing.JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         Functions.setLineNumberOnJTextComponent(jTextCodigoEntrada); //Añadimos NO. de lineas al Campo de Codigo de entrada
+        
+         directorio = new Directory(this, jTextCodigoEntrada, "Proyecto Final - Compilador LyA II", ".lincode");
     }
 
     /**
@@ -51,6 +54,9 @@ public class IDE extends javax.swing.JFrame {
         jTableID = new javax.swing.JTable();
         Identificadores = new javax.swing.JLabel();
         Menu = new javax.swing.JMenuBar();
+        Archivo = new javax.swing.JMenu();
+        Abrir = new javax.swing.JMenuItem();
+        Guardar = new javax.swing.JMenuItem();
         MenuArchivos = new javax.swing.JMenu();
         PDFLexico = new javax.swing.JMenuItem();
         PDFSintactico = new javax.swing.JMenuItem();
@@ -59,7 +65,7 @@ public class IDE extends javax.swing.JFrame {
         ManualUsuario = new javax.swing.JMenuItem();
         Documentacion = new javax.swing.JMenuItem();
         About = new javax.swing.JMenu();
-        Integrantes = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -116,6 +122,26 @@ public class IDE extends javax.swing.JFrame {
         Identificadores.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         Identificadores.setText("Generación de Token´s");
 
+        Archivo.setText("Abrir / Guardar");
+
+        Abrir.setText("Abrir");
+        Abrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AbrirActionPerformed(evt);
+            }
+        });
+        Archivo.add(Abrir);
+
+        Guardar.setText("Guardar");
+        Guardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GuardarActionPerformed(evt);
+            }
+        });
+        Archivo.add(Guardar);
+
+        Menu.add(Archivo);
+
         MenuArchivos.setText("Archivos");
 
         PDFLexico.setText("Análisis Léxico");
@@ -166,13 +192,13 @@ public class IDE extends javax.swing.JFrame {
 
         About.setText("Acerca de");
 
-        Integrantes.setText("Integrantes");
-        Integrantes.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem1.setText("jMenuItem1");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                IntegrantesActionPerformed(evt);
+                jMenuItem1ActionPerformed(evt);
             }
         });
-        About.add(Integrantes);
+        About.add(jMenuItem1);
 
         Menu.add(About);
 
@@ -317,11 +343,24 @@ public class IDE extends javax.swing.JFrame {
         System.out.println("Bienvenido a Analisis Semantico");
     }//GEN-LAST:event_btnSemanticoActionPerformed
 
-    private void IntegrantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IntegrantesActionPerformed
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         Integrantes aux= new Integrantes();
         aux.setVisible(true); 
         this.dispose();
-    }//GEN-LAST:event_IntegrantesActionPerformed
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void AbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbrirActionPerformed
+        // TODO add your handling code here:
+        if(directorio.Open()){
+
+        }
+    }//GEN-LAST:event_AbrirActionPerformed
+
+    private void GuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarActionPerformed
+        // TODO add your handling code here:
+        if(directorio.Save()){
+        }
+    }//GEN-LAST:event_GuardarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -360,12 +399,14 @@ public class IDE extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu About;
+    private javax.swing.JMenuItem Abrir;
     private javax.swing.JLabel Analisis;
+    private javax.swing.JMenu Archivo;
     private javax.swing.JMenuItem Documentacion;
+    private javax.swing.JMenuItem Guardar;
     private javax.swing.JLabel IMGTecCelaya;
     private javax.swing.JLabel IMGTecnm;
     private javax.swing.JLabel Identificadores;
-    private javax.swing.JMenuItem Integrantes;
     private javax.swing.JMenuItem ManualUsuario;
     private javax.swing.JMenuBar Menu;
     private javax.swing.JMenu MenuArchivos;
@@ -378,6 +419,7 @@ public class IDE extends javax.swing.JFrame {
     private javax.swing.JButton btnLéxico;
     private javax.swing.JButton btnSemantico;
     private javax.swing.JButton btnSintactico;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollEntrada;
     private javax.swing.JScrollPane jScrollSalida;
     private javax.swing.JScrollPane jScrollTablaId;
