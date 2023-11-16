@@ -26,7 +26,7 @@ public class IDE extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         Functions.setLineNumberOnJTextComponent(jTextCodigoEntrada); //Añadimos NO. de lineas al Campo de Codigo de entrada
         
-         directorio = new Directory(this, jTextCodigoEntrada, "Proyecto Final - Compilador LyA II", ".lincode");
+         directorio = new Directory(this, jTextCodigoEntrada, "Proyecto Final", ".lincode");//Marcamos el Directorio pasando argumentos de importancia
     }
 
     /**
@@ -48,13 +48,14 @@ public class IDE extends javax.swing.JFrame {
         jScrollEntrada = new javax.swing.JScrollPane();
         jTextCodigoEntrada = new javax.swing.JTextPane();
         jScrollSalida = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jTextCodigoSalida = new javax.swing.JTextArea();
         Salida = new javax.swing.JLabel();
         jScrollTablaId = new javax.swing.JScrollPane();
         jTableID = new javax.swing.JTable();
         Identificadores = new javax.swing.JLabel();
         Menu = new javax.swing.JMenuBar();
         Archivo = new javax.swing.JMenu();
+        Nuevo = new javax.swing.JMenuItem();
         Abrir = new javax.swing.JMenuItem();
         Guardar = new javax.swing.JMenuItem();
         MenuArchivos = new javax.swing.JMenu();
@@ -65,7 +66,7 @@ public class IDE extends javax.swing.JFrame {
         ManualUsuario = new javax.swing.JMenuItem();
         Documentacion = new javax.swing.JMenuItem();
         About = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        Integrantes = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -102,9 +103,9 @@ public class IDE extends javax.swing.JFrame {
 
         jScrollEntrada.setViewportView(jTextCodigoEntrada);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollSalida.setViewportView(jTextArea1);
+        jTextCodigoSalida.setColumns(20);
+        jTextCodigoSalida.setRows(5);
+        jScrollSalida.setViewportView(jTextCodigoSalida);
 
         Salida.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         Salida.setText("Salida:");
@@ -122,7 +123,15 @@ public class IDE extends javax.swing.JFrame {
         Identificadores.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         Identificadores.setText("Generación de Token´s");
 
-        Archivo.setText("Abrir / Guardar");
+        Archivo.setText("Archivo");
+
+        Nuevo.setText("Nuevo");
+        Nuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NuevoActionPerformed(evt);
+            }
+        });
+        Archivo.add(Nuevo);
 
         Abrir.setText("Abrir");
         Abrir.addActionListener(new java.awt.event.ActionListener() {
@@ -142,7 +151,7 @@ public class IDE extends javax.swing.JFrame {
 
         Menu.add(Archivo);
 
-        MenuArchivos.setText("Archivos");
+        MenuArchivos.setText("Archivos de Análisis");
 
         PDFLexico.setText("Análisis Léxico");
         PDFLexico.addActionListener(new java.awt.event.ActionListener() {
@@ -192,13 +201,13 @@ public class IDE extends javax.swing.JFrame {
 
         About.setText("Acerca de");
 
-        jMenuItem1.setText("jMenuItem1");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        Integrantes.setText("Integrantes");
+        Integrantes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                IntegrantesActionPerformed(evt);
             }
         });
-        About.add(jMenuItem1);
+        About.add(Integrantes);
 
         Menu.add(About);
 
@@ -211,25 +220,28 @@ public class IDE extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(136, 136, 136)
-                                    .addComponent(Analisis))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(77, 77, 77)
-                                    .addComponent(btnLéxico)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(btnSintactico)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(btnSemantico))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(54, 54, 54)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(Salida)
-                                        .addComponent(jScrollSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jScrollEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                            .addGap(54, 54, 54)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(Salida)
+                                                .addComponent(jScrollSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(136, 136, 136)
+                                        .addComponent(Analisis)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(77, 77, 77)
+                                .addComponent(btnLéxico)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSintactico)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSemantico)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollTablaId, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(Identificadores)))
@@ -257,24 +269,24 @@ public class IDE extends javax.swing.JFrame {
                         .addComponent(Titulo)))
                 .addGap(25, 25, 25)
                 .addComponent(Analisis)
+                .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(Identificadores)
                         .addGap(18, 18, 18)
+                        .addComponent(jScrollTablaId))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnLéxico)
                             .addComponent(btnSemantico)
                             .addComponent(btnSintactico))
-                        .addGap(59, 59, 59)
+                        .addGap(80, 80, 80)
                         .addComponent(jScrollEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
                         .addComponent(Salida)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(Identificadores)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollTablaId)))
+                        .addComponent(jScrollSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -343,16 +355,16 @@ public class IDE extends javax.swing.JFrame {
         System.out.println("Bienvenido a Analisis Semantico");
     }//GEN-LAST:event_btnSemanticoActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void IntegrantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IntegrantesActionPerformed
         Integrantes aux= new Integrantes();
         aux.setVisible(true); 
         this.dispose();
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_IntegrantesActionPerformed
 
     private void AbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbrirActionPerformed
         // TODO add your handling code here:
         if(directorio.Open()){
-
+           
         }
     }//GEN-LAST:event_AbrirActionPerformed
 
@@ -361,6 +373,12 @@ public class IDE extends javax.swing.JFrame {
         if(directorio.Save()){
         }
     }//GEN-LAST:event_GuardarActionPerformed
+
+    private void NuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NuevoActionPerformed
+        // TODO add your handling code here:
+        directorio.New();
+        limpiar();
+    }//GEN-LAST:event_NuevoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -407,10 +425,12 @@ public class IDE extends javax.swing.JFrame {
     private javax.swing.JLabel IMGTecCelaya;
     private javax.swing.JLabel IMGTecnm;
     private javax.swing.JLabel Identificadores;
+    private javax.swing.JMenuItem Integrantes;
     private javax.swing.JMenuItem ManualUsuario;
     private javax.swing.JMenuBar Menu;
     private javax.swing.JMenu MenuArchivos;
     private javax.swing.JMenu MenuAyuda;
+    private javax.swing.JMenuItem Nuevo;
     private javax.swing.JMenuItem PDFLexico;
     private javax.swing.JMenuItem PDFSemantico;
     private javax.swing.JMenuItem PDFSintactico;
@@ -419,12 +439,21 @@ public class IDE extends javax.swing.JFrame {
     private javax.swing.JButton btnLéxico;
     private javax.swing.JButton btnSemantico;
     private javax.swing.JButton btnSintactico;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollEntrada;
     private javax.swing.JScrollPane jScrollSalida;
     private javax.swing.JScrollPane jScrollTablaId;
     private javax.swing.JTable jTableID;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextCodigoEntrada;
+    private javax.swing.JTextArea jTextCodigoSalida;
     // End of variables declaration//GEN-END:variables
+
+// METODOS UTILIZADOS
+private void limpiar(){
+    Functions.clearDataInTable(jTableID);
+    jTextCodigoEntrada.setText("");
+    jTextCodigoSalida.setText("");
 }
+
+}
+
+
