@@ -6,9 +6,11 @@ package compilador;
 
 import compilerTools.Directory;
 import compilerTools.Functions;
+import compilerTools.Token;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,6 +18,7 @@ import java.io.IOException;
  */
 public class IDE extends javax.swing.JFrame {
     private Directory directorio;
+    private ArrayList<Token> tokens;
     /**
      * Creates new form IDE
      */
@@ -27,6 +30,12 @@ public class IDE extends javax.swing.JFrame {
         Functions.setLineNumberOnJTextComponent(jTextCodigoEntrada); //Añadimos NO. de lineas al Campo de Codigo de entrada
         
          directorio = new Directory(this, jTextCodigoEntrada, "Proyecto Final", ".lincode");//Marcamos el Directorio pasando argumentos de importancia
+         
+         btnLéxico.setEnabled(false);
+         btnSemantico.setEnabled(false);
+         btnSintactico.setEnabled(false);
+         jTextCodigoSalida.setEditable(false);
+         jTableID.setEnabled(false);
     }
 
     /**
@@ -221,27 +230,24 @@ public class IDE extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jScrollEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addGap(54, 54, 54)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(Salida)
+                                        .addComponent(jScrollSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jScrollEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                            .addGap(54, 54, 54)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(Salida)
-                                                .addComponent(jScrollSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(136, 136, 136)
-                                        .addComponent(Analisis)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE))
+                                .addGap(136, 136, 136)
+                                .addComponent(Analisis))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(77, 77, 77)
                                 .addComponent(btnLéxico)
                                 .addGap(18, 18, 18)
                                 .addComponent(btnSintactico)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnSemantico)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(btnSemantico)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollTablaId, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(Identificadores)))
@@ -364,13 +370,14 @@ public class IDE extends javax.swing.JFrame {
     private void AbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbrirActionPerformed
         // TODO add your handling code here:
         if(directorio.Open()){
-           
+           btnLéxico.setEnabled(true);
         }
     }//GEN-LAST:event_AbrirActionPerformed
 
     private void GuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarActionPerformed
         // TODO add your handling code here:
         if(directorio.Save()){
+            btnLéxico.setEnabled(true);
         }
     }//GEN-LAST:event_GuardarActionPerformed
 
@@ -378,6 +385,7 @@ public class IDE extends javax.swing.JFrame {
         // TODO add your handling code here:
         directorio.New();
         limpiar();
+        btnLéxico.setEnabled(true);
     }//GEN-LAST:event_NuevoActionPerformed
 
     /**
@@ -453,6 +461,23 @@ private void limpiar(){
     jTextCodigoEntrada.setText("");
     jTextCodigoSalida.setText("");
 }
+
+private void analisisLexico(){
+        
+    }
+
+
+private void analisisSintactico(){
+        
+    }
+
+private void analisisSemantico(){
+        
+    }
+
+private void generarTokens(){
+        
+    }
 
 }
 
