@@ -126,7 +126,7 @@ Numero = 0 | [1-9][0-9]*
 "END" | "end" | "End" { return token(yytext(), "END", yyline, yycolumn); }/*"END*/
 
 /* Variables */
-{Identificador} { return token(yytext(), "ID", yyline, yycolumn); }/*VARIABLE*/
+{Identificador} { return token(yytext(), "300", yyline, yycolumn); }/*VARIABLE*/
 
 
 /**/
