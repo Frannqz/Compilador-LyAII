@@ -8,8 +8,13 @@ import compilerTools.Directory;
 import compilerTools.Functions;
 import compilerTools.Token;
 import java.awt.Desktop;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +23,7 @@ import java.util.ArrayList;
  */
 public class IDE extends javax.swing.JFrame {
     private Directory directorio;
-    private ArrayList<Token> tokens;
+    private ArrayList<Token> tokens; //importado de jar compilerTools
     /**
      * Creates new form IDE
      */
@@ -35,7 +40,8 @@ public class IDE extends javax.swing.JFrame {
          btnSemantico.setEnabled(false);
          btnSintactico.setEnabled(false);
          jTextCodigoSalida.setEditable(false);
-         jTableID.setEnabled(false);
+         
+         tokens = new ArrayList<>();
     }
 
     /**
@@ -126,7 +132,15 @@ public class IDE extends javax.swing.JFrame {
             new String [] {
                 "ID", "Token", "Línea"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollTablaId.setViewportView(jTableID);
 
         Identificadores.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -227,38 +241,40 @@ public class IDE extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jScrollEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addGap(54, 54, 54)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(Salida)
-                                        .addComponent(jScrollSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(136, 136, 136)
-                                .addComponent(Analisis))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(77, 77, 77)
-                                .addComponent(btnLéxico)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnSintactico)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnSemantico)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollTablaId, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Identificadores)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(IMGTecnm)
-                        .addGap(88, 88, 88)
-                        .addComponent(Titulo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(IMGTecCelaya)))
+                .addGap(34, 34, 34)
+                .addComponent(IMGTecnm)
+                .addGap(88, 88, 88)
+                .addComponent(Titulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
+                .addComponent(IMGTecCelaya)
                 .addGap(71, 71, 71))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(54, 54, 54)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(Salida)
+                            .addComponent(jScrollEntrada)
+                            .addComponent(jScrollSalida, javax.swing.GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(136, 136, 136)
+                        .addComponent(Analisis))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(77, 77, 77)
+                        .addComponent(btnLéxico)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSintactico)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSemantico)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 208, Short.MAX_VALUE)
+                        .addComponent(Identificadores)
+                        .addGap(183, 183, 183))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollTablaId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -289,9 +305,9 @@ public class IDE extends javax.swing.JFrame {
                             .addComponent(btnSintactico))
                         .addGap(80, 80, 80)
                         .addComponent(jScrollEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                         .addComponent(Salida)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(jScrollSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -347,8 +363,8 @@ public class IDE extends javax.swing.JFrame {
     }//GEN-LAST:event_DocumentacionActionPerformed
 
     private void btnLéxicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLéxicoActionPerformed
-        
         System.out.println("Bienvenido a Analisis Lexico");
+        analisisLexico();
     }//GEN-LAST:event_btnLéxicoActionPerformed
 
     private void btnSintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSintacticoActionPerformed
@@ -385,7 +401,6 @@ public class IDE extends javax.swing.JFrame {
         // TODO add your handling code here:
         directorio.New();
         limpiar();
-        btnLéxico.setEnabled(true);
     }//GEN-LAST:event_NuevoActionPerformed
 
     /**
@@ -463,6 +478,30 @@ private void limpiar(){
 }
 
 private void analisisLexico(){
+    Lexer lexer;
+        try {
+            File codigo = new File("code.encrypter");
+            FileOutputStream output = new FileOutputStream(codigo);
+            byte[] bytesText = jTextCodigoEntrada.getText().getBytes();
+            output.write(bytesText);
+            BufferedReader entrada = new BufferedReader(new InputStreamReader(new FileInputStream(codigo), "UTF8"));
+            lexer = new Lexer(entrada);
+            while (true) {
+                Token token = lexer.yylex();
+                if (token == null) {
+                    break;
+                }
+                tokens.add(token);
+            }
+         generarTokens();
+        jTextCodigoSalida.setText("¡Fase de Análisis Completada¡");   
+        }
+        catch (FileNotFoundException ex) {
+            System.out.println("Archivo no encontrado ó corrupto " + ex.getMessage());
+        } catch (IOException ex) {
+            System.out.println("Error al escribir en el archivo... " + ex.getMessage());
+        }
+       
         
     }
 
@@ -476,7 +515,12 @@ private void analisisSemantico(){
     }
 
 private void generarTokens(){
-        
+        tokens.forEach(token ->{
+            Object[] datos = new Object[]{
+                token.getLexicalComp(), token.getLexeme(), token.getLine()
+            };
+            Functions.addRowDataInTable(jTableID, datos);
+        });
     }
 
 }
