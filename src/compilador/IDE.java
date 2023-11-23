@@ -366,17 +366,19 @@ public class IDE extends javax.swing.JFrame {
         System.out.println("Bienvenido a Analisis Lexico");
         Functions.clearDataInTable(jTableID);
         tokens.clear();
-        analisisLexico();
+        
+        boolean lexicoExitoso = analisisLexico();// Realizar el análisis léxico y obtener el resultado
+        btnSintactico.setEnabled(lexicoExitoso);// Habilitamos botón de análisis sintáctico solo si el análisis léxico fue exitoso
     }//GEN-LAST:event_btnLéxicoActionPerformed
 
     private void btnSintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSintacticoActionPerformed
-        
         System.out.println("Bienvenido a Analisis Sintactico");
+        analisisSintactico();
     }//GEN-LAST:event_btnSintacticoActionPerformed
 
     private void btnSemanticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSemanticoActionPerformed
-        
         System.out.println("Bienvenido a Analisis Semantico");
+        analisisSemantico();
     }//GEN-LAST:event_btnSemanticoActionPerformed
 
     private void IntegrantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IntegrantesActionPerformed
@@ -479,33 +481,34 @@ private void limpiar(){
     jTextCodigoSalida.setText("");
 }
 
-private void analisisLexico(){
+private boolean analisisLexico() {
     Lexer lexer;
-        try {
-            File codigo = new File("code.encrypter");
-            FileOutputStream output = new FileOutputStream(codigo);
-            byte[] bytesText = jTextCodigoEntrada.getText().getBytes();
-            output.write(bytesText);
-            BufferedReader entrada = new BufferedReader(new InputStreamReader(new FileInputStream(codigo), "UTF8"));
-            lexer = new Lexer(entrada);
-            while (true) {
-                Token token = lexer.yylex();
-                if (token == null) {
-                    break;
-                }
-                tokens.add(token);
+    try {
+        File codigo = new File("code.encrypter");
+        FileOutputStream output = new FileOutputStream(codigo);
+        byte[] bytesText = jTextCodigoEntrada.getText().getBytes();
+        output.write(bytesText);
+        BufferedReader entrada = new BufferedReader(new InputStreamReader(new FileInputStream(codigo), "UTF8"));
+        lexer = new Lexer(entrada);
+        while (true) {
+            Token token = lexer.yylex();
+            if (token == null) {
+                break;
             }
-         generarTokens();
-        jTextCodigoSalida.setText("¡Fase de Análisis Completada¡");   
+            tokens.add(token);
         }
-        catch (FileNotFoundException ex) {
-            System.out.println("Archivo no encontrado ó corrupto " + ex.getMessage());
-        } catch (IOException ex) {
-            System.out.println("Error al escribir en el archivo... " + ex.getMessage());
-        }
-       
+        generarTokens();
+        jTextCodigoSalida.setText("¡Fase de Análisis Completada!");
+        return true;  // Indica que el análisis léxico fue exitoso
         
+    } catch (FileNotFoundException ex) {
+        System.out.println("Archivo no encontrado ó corrupto " + ex.getMessage());
+    } catch (IOException ex) {
+        System.out.println("Error al escribir en el archivo... " + ex.getMessage());
     }
+    return false;  // Indica que hubo un error en el análisis léxico
+}
+
 
 
 private void analisisSintactico(){
