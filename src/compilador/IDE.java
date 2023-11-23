@@ -364,6 +364,8 @@ public class IDE extends javax.swing.JFrame {
 
     private void btnLéxicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLéxicoActionPerformed
         System.out.println("Bienvenido a Analisis Lexico");
+        Functions.clearDataInTable(jTableID);
+        tokens.clear();
         analisisLexico();
     }//GEN-LAST:event_btnLéxicoActionPerformed
 
