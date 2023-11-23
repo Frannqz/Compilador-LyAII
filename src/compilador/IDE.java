@@ -445,6 +445,8 @@ public class IDE extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(directorio.Open()){
            btnLéxico.setEnabled(true);
+           btnSemantico.setEnabled(false);
+           btnSintactico.setEnabled(false);
         }
     }//GEN-LAST:event_AbrirActionPerformed
 
