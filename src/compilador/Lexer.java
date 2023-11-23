@@ -109,16 +109,16 @@ class Lexer {
     "\1\0\1\1\2\2\1\1\1\3\1\4\1\5\1\6"+
     "\1\7\1\10\1\11\1\12\1\13\1\14\2\15\1\16"+
     "\1\17\1\20\1\21\1\22\17\23\1\24\1\25\16\23"+
-    "\1\26\1\27\1\30\1\21\1\0\1\31\1\32\1\0"+
-    "\1\2\1\0\1\33\1\34\1\35\30\23\1\36\1\23"+
-    "\1\37\1\23\1\37\4\23\1\40\24\23\2\0\2\41"+
-    "\1\42\10\23\1\43\1\23\1\44\5\23\1\45\4\23"+
-    "\1\46\3\23\1\47\22\23\1\50\3\23\1\0\1\2"+
-    "\10\23\1\51\12\23\1\52\12\23\1\53\1\54\2\23"+
-    "\1\55\2\23\1\56\1\23\1\57\1\23\1\60\2\23"+
-    "\1\61\1\62\1\23\1\63\3\23\1\64\1\65\1\66"+
-    "\4\23\1\67\2\23\1\70\1\71\1\72\1\73\1\74"+
-    "\1\75";
+    "\1\26\1\27\1\30\1\31\1\0\1\32\1\33\1\0"+
+    "\1\2\1\0\1\34\1\35\1\36\30\23\1\37\1\23"+
+    "\1\40\1\23\1\40\4\23\1\41\24\23\2\0\2\42"+
+    "\1\43\10\23\1\44\1\23\1\45\5\23\1\46\4\23"+
+    "\1\47\3\23\1\50\22\23\1\51\3\23\1\0\1\2"+
+    "\10\23\1\52\12\23\1\53\12\23\1\54\1\55\2\23"+
+    "\1\56\2\23\1\57\1\23\1\60\1\23\1\61\2\23"+
+    "\1\62\1\63\1\23\1\64\3\23\1\65\1\66\1\67"+
+    "\4\23\1\70\2\23\1\71\1\72\1\73\1\74\1\75"+
+    "\1\76";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[242];
@@ -969,310 +969,315 @@ class Lexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { return token(yytext(), "ERROR", yyline, yycolumn);
+            { return token(yytext(), "404", yyline, yycolumn);
             }
             // fall through
-          case 62: break;
+          case 63: break;
           case 2:
             { /*Ignorar*/
             }
             // fall through
-          case 63: break;
+          case 64: break;
           case 3:
             { return token(yytext(), "17", yyline, yycolumn);
             }
             // fall through
-          case 64: break;
+          case 65: break;
           case 4:
             { return token(yytext(), "15", yyline, yycolumn);
             }
             // fall through
-          case 65: break;
+          case 66: break;
           case 5:
             { return token(yytext(), "18", yyline, yycolumn);
             }
             // fall through
-          case 66: break;
+          case 67: break;
           case 6:
             { return token(yytext(), "19", yyline, yycolumn);
             }
             // fall through
-          case 67: break;
+          case 68: break;
           case 7:
             { return token(yytext(), "4", yyline, yycolumn);
             }
             // fall through
-          case 68: break;
+          case 69: break;
           case 8:
             { return token(yytext(), "1", yyline, yycolumn);
             }
             // fall through
-          case 69: break;
+          case 70: break;
           case 9:
             { return token(yytext(), "12", yyline, yycolumn);
             }
             // fall through
-          case 70: break;
+          case 71: break;
           case 10:
             { return token(yytext(), "2", yyline, yycolumn);
             }
             // fall through
-          case 71: break;
+          case 72: break;
           case 11:
             { return token(yytext(), "11", yyline, yycolumn);
             }
             // fall through
-          case 72: break;
+          case 73: break;
           case 12:
             { return token(yytext(), "3", yyline, yycolumn);
             }
             // fall through
-          case 73: break;
+          case 74: break;
           case 13:
             { return token(yytext(), "27", yyline, yycolumn);
             }
             // fall through
-          case 74: break;
+          case 75: break;
           case 14:
             { return token(yytext(), "13", yyline, yycolumn);
             }
             // fall through
-          case 75: break;
+          case 76: break;
           case 15:
             { return token(yytext(), "14", yyline, yycolumn);
             }
             // fall through
-          case 76: break;
+          case 77: break;
           case 16:
             { return token(yytext(), "8", yyline, yycolumn);
             }
             // fall through
-          case 77: break;
+          case 78: break;
           case 17:
             { return token(yytext(), "16", yyline, yycolumn);
             }
             // fall through
-          case 78: break;
+          case 79: break;
           case 18:
             { return token(yytext(), "7", yyline, yycolumn);
             }
             // fall through
-          case 79: break;
+          case 80: break;
           case 19:
             { return token(yytext(), "300", yyline, yycolumn);
             }
             // fall through
-          case 80: break;
+          case 81: break;
           case 20:
             { return token(yytext(), "22", yyline, yycolumn);
             }
             // fall through
-          case 81: break;
+          case 82: break;
           case 21:
             { return token(yytext(), "23", yyline, yycolumn);
             }
             // fall through
-          case 82: break;
+          case 83: break;
           case 22:
             { return token(yytext(), "20", yyline, yycolumn);
             }
             // fall through
-          case 83: break;
+          case 84: break;
           case 23:
             { return token(yytext(), "21", yyline, yycolumn);
             }
             // fall through
-          case 84: break;
+          case 85: break;
           case 24:
             { return token(yytext(), "6", yyline, yycolumn);
             }
             // fall through
-          case 85: break;
-          case 25:
-            { return token(yytext(), "24", yyline, yycolumn);
-            }
-            // fall through
           case 86: break;
-          case 26:
-            { return token(yytext(), "25", yyline, yycolumn);
+          case 25:
+            { return token(yytext(), "28", yyline, yycolumn);
             }
             // fall through
           case 87: break;
-          case 27:
-            { return token(yytext(), "10", yyline, yycolumn);
+          case 26:
+            { return token(yytext(), "24", yyline, yycolumn);
             }
             // fall through
           case 88: break;
-          case 28:
-            { return token(yytext(), "5", yyline, yycolumn);
+          case 27:
+            { return token(yytext(), "25", yyline, yycolumn);
             }
             // fall through
           case 89: break;
-          case 29:
-            { return token(yytext(), "9", yyline, yycolumn);
+          case 28:
+            { return token(yytext(), "10", yyline, yycolumn);
             }
             // fall through
           case 90: break;
-          case 30:
-            { return token(yytext(), "106", yyline, yycolumn);
+          case 29:
+            { return token(yytext(), "5", yyline, yycolumn);
             }
             // fall through
           case 91: break;
-          case 31:
-            { return token(yytext(), "117", yyline, yycolumn);
+          case 30:
+            { return token(yytext(), "9", yyline, yycolumn);
             }
             // fall through
           case 92: break;
-          case 32:
-            { return token(yytext(), "123", yyline, yycolumn);
+          case 31:
+            { return token(yytext(), "106", yyline, yycolumn);
             }
             // fall through
           case 93: break;
-          case 33:
-            { return token(yytext(), "26", yyline, yycolumn);
+          case 32:
+            { return token(yytext(), "117", yyline, yycolumn);
             }
             // fall through
           case 94: break;
-          case 34:
-            { return token(yytext(), "122", yyline, yycolumn);
+          case 33:
+            { return token(yytext(), "123", yyline, yycolumn);
             }
             // fall through
           case 95: break;
-          case 35:
-            { return token(yytext(), "201", yyline, yycolumn);
+          case 34:
+            { return token(yytext(), "26", yyline, yycolumn);
             }
             // fall through
           case 96: break;
-          case 36:
-            { return token(yytext(), "END", yyline, yycolumn);
+          case 35:
+            { return token(yytext(), "122", yyline, yycolumn);
             }
             // fall through
           case 97: break;
-          case 37:
-            { return token(yytext(), "108", yyline, yycolumn);
+          case 36:
+            { return token(yytext(), "201", yyline, yycolumn);
             }
             // fall through
           case 98: break;
-          case 38:
-            { return token(yytext(), "101", yyline, yycolumn);
+          case 37:
+            { return token(yytext(), "END", yyline, yycolumn);
             }
             // fall through
           case 99: break;
-          case 39:
-            { return token(yytext(), "124", yyline, yycolumn);
+          case 38:
+            { return token(yytext(), "108", yyline, yycolumn);
             }
             // fall through
           case 100: break;
-          case 40:
-            { return token(yytext(), "111", yyline, yycolumn);
+          case 39:
+            { return token(yytext(), "101", yyline, yycolumn);
             }
             // fall through
           case 101: break;
-          case 41:
-            { return token(yytext(), "107", yyline, yycolumn);
+          case 40:
+            { return token(yytext(), "124", yyline, yycolumn);
             }
             // fall through
           case 102: break;
-          case 42:
-            { return token(yytext(), "115", yyline, yycolumn);
+          case 41:
+            { return token(yytext(), "111", yyline, yycolumn);
             }
             // fall through
           case 103: break;
-          case 43:
-            { return token(yytext(), "119", yyline, yycolumn);
+          case 42:
+            { return token(yytext(), "107", yyline, yycolumn);
             }
             // fall through
           case 104: break;
-          case 44:
-            { return token(yytext(), "SQRT", yyline, yycolumn);
+          case 43:
+            { return token(yytext(), "115", yyline, yycolumn);
             }
             // fall through
           case 105: break;
-          case 45:
-            { return token(yytext(), "120", yyline, yycolumn);
+          case 44:
+            { return token(yytext(), "119", yyline, yycolumn);
             }
             // fall through
           case 106: break;
-          case 46:
-            { return token(yytext(), "BEGIN", yyline, yycolumn);
+          case 45:
+            { return token(yytext(), "SQRT", yyline, yycolumn);
             }
             // fall through
           case 107: break;
-          case 47:
-            { return token(yytext(), "114", yyline, yycolumn);
+          case 46:
+            { return token(yytext(), "120", yyline, yycolumn);
             }
             // fall through
           case 108: break;
-          case 48:
-            { return token(yytext(), "203", yyline, yycolumn);
+          case 47:
+            { return token(yytext(), "BEGIN", yyline, yycolumn);
             }
             // fall through
           case 109: break;
-          case 49:
-            { return token(yytext(), "121", yyline, yycolumn);
+          case 48:
+            { return token(yytext(), "114", yyline, yycolumn);
             }
             // fall through
           case 110: break;
-          case 50:
-            { return token(yytext(), "103", yyline, yycolumn);
+          case 49:
+            { return token(yytext(), "203", yyline, yycolumn);
             }
             // fall through
           case 111: break;
-          case 51:
-            { return token(yytext(), "109", yyline, yycolumn);
+          case 50:
+            { return token(yytext(), "121", yyline, yycolumn);
             }
             // fall through
           case 112: break;
-          case 52:
-            { return token(yytext(), "POWER", yyline, yycolumn);
+          case 51:
+            { return token(yytext(), "103", yyline, yycolumn);
             }
             // fall through
           case 113: break;
-          case 53:
-            { return token(yytext(), "116", yyline, yycolumn);
+          case 52:
+            { return token(yytext(), "109", yyline, yycolumn);
             }
             // fall through
           case 114: break;
-          case 54:
-            { return token(yytext(), "118", yyline, yycolumn);
+          case 53:
+            { return token(yytext(), "POWER", yyline, yycolumn);
             }
             // fall through
           case 115: break;
-          case 55:
-            { return token(yytext(), "105", yyline, yycolumn);
+          case 54:
+            { return token(yytext(), "116", yyline, yycolumn);
             }
             // fall through
           case 116: break;
-          case 56:
-            { return token(yytext(), "112", yyline, yycolumn);
+          case 55:
+            { return token(yytext(), "118", yyline, yycolumn);
             }
             // fall through
           case 117: break;
-          case 57:
-            { return token(yytext(), "200", yyline, yycolumn);
+          case 56:
+            { return token(yytext(), "105", yyline, yycolumn);
             }
             // fall through
           case 118: break;
-          case 58:
-            { return token(yytext(), "110", yyline, yycolumn);
+          case 57:
+            { return token(yytext(), "112", yyline, yycolumn);
             }
             // fall through
           case 119: break;
-          case 59:
-            { return token(yytext(), "113", yyline, yycolumn);
+          case 58:
+            { return token(yytext(), "200", yyline, yycolumn);
             }
             // fall through
           case 120: break;
-          case 60:
-            { return token(yytext(), "102", yyline, yycolumn);
+          case 59:
+            { return token(yytext(), "110", yyline, yycolumn);
             }
             // fall through
           case 121: break;
-          case 61:
-            { return token(yytext(), "104", yyline, yycolumn);
+          case 60:
+            { return token(yytext(), "113", yyline, yycolumn);
             }
             // fall through
           case 122: break;
+          case 61:
+            { return token(yytext(), "102", yyline, yycolumn);
+            }
+            // fall through
+          case 123: break;
+          case 62:
+            { return token(yytext(), "104", yyline, yycolumn);
+            }
+            // fall through
+          case 124: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

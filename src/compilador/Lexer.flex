@@ -60,10 +60,9 @@ Numero = 0 | [1-9][0-9]*
 ":" { return token(yytext(), "13", yyline, yycolumn); }/* DOSPUNTOS */
 ";" { return token(yytext(), "14", yyline, yycolumn); }/* PUNTO COMA */
 \' { return token(yytext(), "15", yyline, yycolumn); }/* COMILLA SIMPLE */
-\" [a-zA-Z0-9_.-]* \" { return token(yytext(), "16", yyline, yycolumn); }/* CADENA */
-
 "=" { return token(yytext(), "16", yyline, yycolumn); }/* ASIGNACION */
 
+\" [a-zA-Z0-9_.-]* \" { return token(yytext(), "28", yyline, yycolumn); }/* CADENA */
 
 \" { return token(yytext(), "17", yyline, yycolumn); }/*COMILLA DOBLE*/
 \( { return token(yytext(), "18", yyline, yycolumn); }/*PARENTESIS ABIERTO*/
@@ -130,5 +129,5 @@ Numero = 0 | [1-9][0-9]*
 
 
 /**/
-. { return token(yytext(), "ERROR", yyline, yycolumn); }/*ERROR*/
+. { return token(yytext(), "404", yyline, yycolumn); }/*ERROR*/
 

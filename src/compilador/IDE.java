@@ -5,7 +5,10 @@
 package compilador;
 
 import compilerTools.Directory;
+import compilerTools.ErrorLSSL;
 import compilerTools.Functions;
+import compilerTools.Grammar;
+import compilerTools.Production;
 import compilerTools.Token;
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -16,14 +19,37 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  *
  * @author Franco - PC
  */
 public class IDE extends javax.swing.JFrame {
+    //importado de jar compilerTools
     private Directory directorio;
-    private ArrayList<Token> tokens; //importado de jar compilerTools
+    private ArrayList<Token> tokens; 
+    private ArrayList<ErrorLSSL> errores;
+    
+    private ArrayList<Production> compaProdIzq;
+    private ArrayList<Production> compaProdDer;
+    private ArrayList<Production> compaProdDoble;
+            
+    private ArrayList<Production> operProdIzq;
+    private ArrayList<Production> operProdDer;
+    private ArrayList<Production> operProdDoble;
+
+    private ArrayList<Production> identProd;
+    private ArrayList<Production> asigProd;
+    private ArrayList<Production> asigProdConID;
+
+    private ArrayList<Production> ifProd;
+    private ArrayList<Production> whileProd;
+
+    private ArrayList<Production> funcProd;
+    
+    private HashMap<String, String> identificador;
     /**
      * Creates new form IDE
      */
@@ -42,6 +68,27 @@ public class IDE extends javax.swing.JFrame {
          jTextCodigoSalida.setEditable(false);
          
          tokens = new ArrayList<>();
+         errores = new ArrayList();
+         operProdIzq = new ArrayList<>();
+         operProdDer = new ArrayList<>();
+         operProdDoble = new ArrayList<>();
+         
+         identProd = new ArrayList<>();
+         
+         ifProd = new ArrayList<>();
+        whileProd = new ArrayList<>();
+        asigProd = new ArrayList<>();
+        asigProdConID = new ArrayList<>();
+        compaProdIzq = new ArrayList<>();
+        compaProdDer = new ArrayList<>();
+        compaProdDoble = new ArrayList<>();
+        operProdIzq = new ArrayList<>();
+        operProdDer = new ArrayList<>();
+        operProdDoble = new ArrayList<>();
+        funcProd = new ArrayList<>();
+         
+         identificador = new HashMap<>();
+         
     }
 
     /**
@@ -374,11 +421,18 @@ public class IDE extends javax.swing.JFrame {
     private void btnSintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSintacticoActionPerformed
         System.out.println("Bienvenido a Analisis Sintactico");
         analisisSintactico();
+        imprimirErrores();
+         // Realizar el análisis sintáctico y obtener el resultado
+    boolean sintacticoExitoso = analisisSintactico();
+
+    // Habilitar el botón de análisis semántico solo si el análisis sintáctico fue exitoso
+    btnSemantico.setEnabled(sintacticoExitoso);
     }//GEN-LAST:event_btnSintacticoActionPerformed
 
     private void btnSemanticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSemanticoActionPerformed
         System.out.println("Bienvenido a Analisis Semantico");
         analisisSemantico();
+        imprimirErrores();
     }//GEN-LAST:event_btnSemanticoActionPerformed
 
     private void IntegrantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IntegrantesActionPerformed
@@ -481,6 +535,16 @@ private void limpiar(){
     jTextCodigoSalida.setText("");
 }
 
+private void generarTokens(){
+        tokens.forEach(token ->{
+            Object[] datos = new Object[]{
+                token.getLexicalComp(), token.getLexeme(), token.getLine()
+            };
+            Functions.addRowDataInTable(jTableID, datos);
+        });
+    }
+
+
 private boolean analisisLexico() {
     Lexer lexer;
     try {
@@ -501,33 +565,491 @@ private boolean analisisLexico() {
         jTextCodigoSalida.setText("¡Fase de Análisis Completada!");
         return true;  // Indica que el análisis léxico fue exitoso
         
-    } catch (FileNotFoundException ex) {
-        System.out.println("Archivo no encontrado ó corrupto " + ex.getMessage());
-    } catch (IOException ex) {
-        System.out.println("Error al escribir en el archivo... " + ex.getMessage());
+    } catch (FileNotFoundException ex) {System.out.println("Archivo no encontrado ó corrupto " + ex.getMessage());
+    } catch (IOException ex) {System.out.println("Error al escribir en el archivo... " + ex.getMessage());
     }
     return false;  // Indica que hubo un error en el análisis léxico
 }
 
 
 
-private void analisisSintactico(){
+private boolean analisisSintactico(){
+        Grammar gramatica = new Grammar(tokens, errores);
+
+        /*ELIMINACION DE ERRORES*/
+        gramatica.delete(new String[]{"ERROR"}, 1);
+        /* Mostrar gramáticas */        
+        gramatica.group("26", "27 11 27");
+         
+                
+        //-------------OPERACION---------------
+        //FORMAS DE CREAR UNA FUNCION CORRECTAMENTE   
+        gramatica.group("OPERACION", "26 (1|2|4|3) 26");
+        gramatica.group("OPERACION", "26 (1|2|4|3) 27");
+        gramatica.group("OPERACION", "26 (1|2|4|3) 300");
+        gramatica.group("OPERACION", "27 (1|2|4|3) 26");
+        gramatica.group("OPERACION", "300 (1|2|4|3) 27",operProdIzq);
+        gramatica.group("OPERACION", "300 (1|2|4|3) 26");
+        gramatica.group("OPERACION", "27 (1|2|4|3) 27");
+        gramatica.group("OPERACION", "27 (1|2|4|3) 300",operProdDer);
+        gramatica.group("OPERACION", "300 (1|2|4|3) 27",operProdIzq);
+        gramatica.group("OPERACION", "300 (1|2|4|3) 300",operProdDoble);
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) 26");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) 27");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) 300",operProdDer);
+        gramatica.group("OPERACION", "26 (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "27 (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "300 (1|2|4|3) OPERACION",operProdIzq);
+        //probablemente haya una mejor forma de hacer esto, ni modo!
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        gramatica.group("OPERACION", "OPERACION (1|2|4|3) OPERACION");
+        //debería de poder servir con 20 términos entonces, creo
+        //ERRORES operacion
+        gramatica.group("OPERACION_ER", "27 (1|2|4|3)",2,"ERROR_SINTACTICO: se necesita un minimo de 2 valores para ralizar la operacion [#, %]");
+        gramatica.group("OPERACION_ER", "(1|2|4|3) 27",2,"ERROR SINTACTICO: se necesita un minimo de 2 valores para ralizar la operacion [#, %]");
+        gramatica.group("OPERACION_ER", "300 (1|2|4|3)",2,"ERROR SINTACTICO: se necesita un minimo de 2 valores para ralizar la operacion [#, %]");
+        gramatica.group("OPERACION_ER", "(1|2|4|3) 300",2,"ERROR SINTACTICO: se necesita un minimo de 2 valores para ralizar la operacion [#, %]");
+       
+        //FORMA CORRECTA DE DECLARAR UNA VARIABLE------------------------------------------------------------
+        gramatica.group("DECL_FLOAT", "103 300 14",identProd);
+        gramatica.group("DECL_FLOAT", "103 300 16 300 14",identProd);
+        gramatica.group("DECL_FLOAT", "103 300 16 26 14",identProd);
+        gramatica.group("DECL_FLOAT", "103 300 16 OPERACION 14",identProd);
         
+        gramatica.group("DECL_INT", "101 300 14",identProd);
+        gramatica.group("DECL_INT", "101 300 16 300 14",identProd);
+        gramatica.group("DECL_INT", "101 300 16 27 14",identProd);
+        gramatica.group("DECL_INT", "101 300 16 OPERACION 14",identProd);
+        
+        gramatica.group("DECL_BOOL", "104 300 14",identProd);
+        gramatica.group("DECL_BOOL", "104 300 16 300 14",identProd);
+        gramatica.group("DECL_BOOL", "104 300 16 (120|121) 14",identProd);
+                
+        gramatica.group("DECL_STRING", "102 300 14",identProd);
+        gramatica.group("DECL_STRING", "102 300 16 300 14",identProd);
+        gramatica.group("DECL_STRING", "102 300 16 28 14",identProd); 
+        //ERRORES SINTACTICOS---------------------------------------------------------------------------
+        //POSIBLES ERRORES AL DECLARAR UNA VARIABLE INT O FLOAT  
+        gramatica.group("DECL_INT", "101 300 16 14",2,"ERROR_SINTACTICO: FALTA ASIGNAR UN VALOR A LA VARIABLE [#, %]");
+        gramatica.group("DECL_INT", "101 300 27 14",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101 300 300 14",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101 300 27",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101 300 300",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101 300 OPERACION 14",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101 300 OPERACION",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101 300 16 300",2,"ERROR_SINTACTICO: 14(;) NO AGREGADO EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101 300 16 26",2,"ERROR_SINTACTICO: VALOR NO ENTERO [#, %]");
+
+//gramatica.group("DECL_INT", "101 300 16 27",2,"ERROR_SINTACTICO: 14(;) NO AGREGADO EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101 300 16 OPERACION",2,"ERROR_SINTACTICO: 14(;) NO AGREGADO EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101  16 27 14",2,"ERROR_SINTACTICO: 300 NO AGREGADO EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101  16 300 14",2,"ERROR_SINTACTICO: 300 NO AGREGADO EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_INT", "101  16 OPERACION 14",2,"ERROR_SINTACTICO: 300 NO AGREGADO EN LA DECLARACION [#, %]");
+        
+        //POSIBLES ERRORES AL DECLARAR UN FLOAT
+        gramatica.group("DECL_103", "103 300 16 14",2,"ERROR_SINTACTICO: FALTA ASIGNAR UN VALOR A LA VARIABLE [#, %]");
+        gramatica.group("DECL_103", "103 300 26 14",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");        
+        gramatica.group("DECL_103", "103 300 26",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_103", "103 300 16 26",2,"ERROR_SINTACTICO: 14(;) NO AGREGADO EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_103", "103 16 26 14",2,"ERROR_SINTACTICO: 300 NO AGREGADO EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_103", "103 300 "
+                + " 27 14",2,"Error sintáctico: Valor float sin punto decimal [#, %]");
+
+        //POSIBLES ERRORES AL DECLARAR UN FLOAT
+        gramatica.group("DECL_STRING", "102 300 "
+                + " 14",2,"ERROR_SINTACTICO: FALTA ASIGNAR UN VALOR A LA VARIABLE [#, %]");
+        gramatica.group("DECL_STRING", "102 300 28 14",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");        
+        gramatica.group("DECL_STRING", "102 300 28",2,"ERROR_SINTACTICO: FALTA DEL TOKEN DE ASIGNACION EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_STRING", "102 300 "
+                + " 28",2,"ERROR_SINTACTICO: 14(;) NO AGREGADO EN LA DECLARACION [#, %]");
+        gramatica.group("DECL_STRING", "102 "
+                + " 28 14",2,"ERROR_SINTACTICO: 300 NO AGREGADO EN LA DECLARACION [#, %]");
+        
+        //ERRORES SEMANTICOS DE VARIABLES -------------------------------------------------------------
+        gramatica.group("RESERV_INDEB", "(102|101|103|104) (200|201|203|106|107|108|117|105|113)",2, "ERROR SEMANTICO \\{}: USO INDEBIDO DE PALABRAS RESERVADAS [#,%]");
+       
+        gramatica.group("ERROR_OP_STRING", "(1|2|4|3) 28",2, "ERROR SEMANTICO \\{}: OPERACION NO PERMITIDA PARA CADENA [#,%]");
+        gramatica.group("ERROR_OP_STRING", "28 (1|2|4|3)",2, "ERROR SEMANTICO \\{}: OPERACION NO PERMITIDA PARA CADENA [#,%]");
+        gramatica.group("ERROR_OP_BOOLEAN", "(1|2|4|3) (120|121)",2, "ERROR SEMANTICO \\{}: OPERACION NO PERMITIDA PARA BOOLEANO [#,%]");
+        gramatica.group("ERROR_OP_BOOLEAN", "(120|121) (1|2|4|3)",2, "ERROR SEMANTICO \\{}: OPERACION NO PERMITIDA PARA BOOLEANO [#,%]");
+
+        gramatica.group("DECL_INT", "(101 300 "
+                + " 26 14)",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES ENTERO [#,%]");
+        gramatica.group("DECL_INT", "(101 300 "
+                + " 28)",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES ENTERO [#,%]");
+        gramatica.group("DECL_INT", "(101 300 "
+                + " (120|121))",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES ENTERO [#,%]");
+        gramatica.group("DECL_INT", "101",2,"ERROR");
+        
+        gramatica.group("DECL_FLOAT", "(103 300 "
+                + " 28)",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES DECIMAL [#,%]");
+        gramatica.group("DECL_FLOAT", "(103 300 16 (120|121))",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES DECIMAL [#,%]");
+        gramatica.group("DECL_FLOAT", "(103 300 16 27 14)",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES DECIMAL [#,%]");
+        gramatica.group("ERROR_FLOAT", "103",2,"ERROR");
+        
+        gramatica.group("DECL_STRING", "(102 300 16 27)",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES CADENA [#,%]");
+        gramatica.group("DECL_STRING", "(102 300 16 (120|121))",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES CADENA [#,%]");
+        gramatica.group("DECL_STRING", "102",2,"ERROR");
+        
+        gramatica.group("ERROR_ASIG_BOOL", "(104 300 16 27)",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES BOOLEANO [#,%]");
+        gramatica.group("ERROR_ASIG_BOOL", "("
+                + " 300 16 (120|121))",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES 104O [#,%]");
+        gramatica.group("ERROR_ASIG_BOOL", "(104 300 16 28)",2, "ERROR SEMANTICO \\{}: VALOR ASIGNADO NO ES BOOLEANO [#,%]");
+        
+        
+        //ASIGNACION DE UNA VARIABLE
+        gramatica.group("PROD_ASIG", "300 16 (28|26|27|120|121) 14",asigProd);
+        gramatica.group("PROD_ASIG", "300 16 OPERACION 14",asigProd);
+        gramatica.group("PROD_ASIG_ID", "300 16 300 14",asigProdConID);
+        
+        //--------------------------------------------------------------------------------------------
+        
+        //-------------CONDICION--------------------------
+        //FORMAS CORRECTAS DE CREAR UNA CONDICION
+        gramatica.group("CONDICION", "27 (5|6|7|10|9|10) 27");
+        gramatica.group("CONDICION", "27 (5|6|7|10|9|10) OPERACION");
+        gramatica.group("CONDICION", "26 (5|6|7|10|9|10) OPERACION");
+
+        gramatica.group("CONDICION", "26 (5|6|7|10|9|10) 27");
+        gramatica.group("CONDICION", "27 (5|6|7|10|9|10) 26");
+        gramatica.group("CONDICION", "26 (5|6|7|10|9|10) 26");
+        gramatica.group("CONDICION", "(120|121) (5|6|7|10|9|10) (120|121)");
+        gramatica.group("CONDICION", "27 (5|6|7|10|9|10) 300",compaProdDer);
+        gramatica.group("CONDICION", "26 (5|6|7|10|9|10) 300",compaProdDer);
+        gramatica.group("CONDICION", "300 (5|6|7|10|9|10) 27",compaProdIzq);
+        gramatica.group("CONDICION", "300 (5|6|7|10|9|10) OPERACION",compaProdIzq);
+        gramatica.group("CONDICION", "300 (5|6|7|10|9|10) 26",compaProdIzq);
+        gramatica.group("CONDICION", "300 (5|6|7|10|9|10) 300",compaProdDoble);
+        gramatica.group("CONDICION", "(120|121) (5|6|7|10|7|10) 300",compaProdDer);
+        gramatica.group("CONDICION", "300 (5|6|7|10|9|10) (120|121)",compaProdIzq);
+
+        gramatica.group("CONDICION", "CONDICION (122|OR) CONDICION");
+        
+        //ERRORES SEMANTICOS
+        gramatica.group("CONDICION", "27 (5|6|7|10|9|10) 28",2,"ERROR_SEMANTICO \\{}: DATOS INCOMPATIBLES PARA SU COMPARACION [#, %]");
+        gramatica.group("CONDICION", "26 (5|6|7|10|9|10) 28",2,"ERROR_SEMANTICO \\{}: DATOS INCOMPATIBLES PARA SU COMPARACION [#, %]");
+        gramatica.group("CONDICION", "28 (5|6|7|10|9|10) 27",2,"ERROR_SEMANTICO \\{}: DATOS INCOMPATIBLES PARA SU COMPARACION [#, %]");
+        gramatica.group("CONDICION", "28 (5|6|7|10|9|10) 26",2,"ERROR_SEMANTICO \\{}: DATOS INCOMPATIBLES PARA SU COMPARACION [#, %]");
+        gramatica.group("CONDICION", "27 (5|6|7|10|9|10) (120|121)",2,"ERROR_SEMANTICO \\{}: DATOS INCOMPATIBLES PARA SU COMPARACION [#, %]");
+        gramatica.group("CONDICION", "26 (5|6|7|10|9|10) (120|121)",2,"ERROR_SEMANTICO \\{}: DATOS INCOMPATIBLES PARA SU COMPARACION [#, %]");
+        
+        
+        
+           
+        //----------------------------------------------------------------------------------------------
+        
+        //----------------105 Y IF-----------------------
+        //FORMAS CORRECTAS DE DECLARAR UN IF
+        gramatica.group("INSTR_IF", "106 18 CONDICION 19 20",true,ifProd);
+        //FORMAS CORRECTAS DE DECLARAR UN WHILE
+        gramatica.group("INSTR_WHILE", "105 18 CONDICION 19 20",whileProd);
+        //POSIBLES ERRORES AL DECLARAR UN IF
+        gramatica.group("INSTR_IF", "106 18 19 20",true,4,"ERROR_SINTACTICO: FALTA LA CONDICION [#, %]");
+        gramatica.group("INSTR_IF", "106 CONDICION 19 20",true,4,"ERROR_SINTACTICO: FALTA EL PARENTESIS ABIERTO EN LA CONDICION [#, %]");
+        gramatica.group("INSTR_IF", "106 18 CONDICION 19",true,4,"ERROR_SINTACTICO: FALTA DE LLAVE DE APERTURA [#, %]");
+        gramatica.finalLineColumn();
+        gramatica.group("INSTR_IF", "106 18 CONDICION",true,4,"ERROR_SINTACTICO: ERROR EN LA CONDICION O FALTA DEL PARENTESIS [#, %]");
+        gramatica.initialLineColumn();
+        gramatica.group("INSTR_IF", "106",2,"ERROR");
+        
+        //POSIBLES ERRORES DE WHILE
+        gramatica.group("INSTR_WHILE", "105 18 19",true,4,"ERROR_SINTACTICO: FALTA LA CONDICION [#, %]");
+        gramatica.group("INSTR_WHILE", "105 CONDICION 19",true,4,"ERROR_SINTACTICO: FALTA EL PARENTESIS ABIERTO EN LA CONDICION [#, %]");
+        gramatica.group("INSTR_WHILE", "105 18 CONDICION 19",true,4,"ERROR_SINTACTICO: FALTA DE LLAVE DE APERTURA [#, %]");        
+        gramatica.finalLineColumn();
+        gramatica.group("INSTR_WHILE", "105 18 CONDICION",true,4,"ERROR_SINTACTICO: ERROR EN LA CONDICION O FALTA DEL PARENTESIS [#, %]");
+        gramatica.initialLineColumn();
+        gramatica.group("INSTR_WHILE", "105",2,"ERROR WHILE");
+        //POSIBLES ERRORES EN LAS CODICIONES
+        gramatica.group("CONDICION", "27 (5|6|7|10|9|10) ",2,"ERROR_SINTACTICO: ERROR EN LA CONDICION [#, %]");
+        gramatica.group("CONDICION", "300 (5|6|7|10|9|10) ",2,"ERROR_SINTACTICO: ERROR EN LA CONDICION [#, %]");
+        gramatica.group("CONDICION", " (5|6|7|10|9|10) 27 ",2,"ERROR_SINTACTICO: ERROR EN LA CONDICION [#, %]");
+        gramatica.group("CONDICION", " (5|6|7|10|9|10) 300 ",2,"ERROR_SINTACTICO: ERROR EN LA CONDICION [#, %]");       
+        gramatica.group("CONDICION", "CONDICION (122|123)",2,"ERROR_SINTACTICO: ERROR EN LA CONDICION [#, %]");
+        //------------------------------------------------------------------------
+
+        //------------------------------------------------------------
+        //INPUT-------------------------------------------------------
+        //FORMA CORRECTA 
+        gramatica.group("INSTR_INPUT", "109 18 28 19 14 ",funcProd);
+        gramatica.group("INSTR_INPUT", "109 18 300 19 14 ",funcProd);
+        
+        gramatica.group("INSTR_OUTPUT", "110 18 28 19 14 ",funcProd);
+        gramatica.group("INSTR_OUTPUT", "110 18 300 19 14 ",funcProd);
+        
+        //ERRORES SINTACTICOS 
+        gramatica.group("INSTR_INPUT", "109 18 28 19",2, "ERROR_SINTACTICO \\{}: FALTA DEL TOKEN (;) [#,%]");
+        gramatica.group("INSTR_INPUT", "109 28 19 14",2, "ERROR_SINTACTICO \\{}: FALTA DEL PARENTESIS ABIERTO [#,%]");
+        
+        //ERROR SEMANTICO
+        gramatica.group("INSTR_INPUT", "109 18 (27|26) 19 14 ",2, "ERROR SEMANTICO \\{}: VALOR INVALIDO EN INPUT[#,%]");
+        gramatica.group("INSTR_INPUT", "109",2,"ERROR INPUT");    
+        //ERRORES SINTACTICOS 
+        gramatica.group("INSTR_INPUT", "110 18 28 19",2, "ERROR_SINTACTICO \\{}: FALTA DEL TOKEN (;) [#,%]");
+        gramatica.group("INSTR_INPUT", "110 28 19 14",2, "ERROR_SINTACTICO \\{}: FALTA DEL PARENTESIS ABIERTO [#,%]");
+        
+        //ERROR SEMANTICO
+        gramatica.group("INSTR_INPUT", "110 18 (27|26) 19 14 ",2, "ERROR SEMANTICO \\{}: VALOR INVALIDO EN INPUT[#,%]");
+        gramatica.group("INSTR_INPUT", "110",2,"ERROR INPUT"); 
+        
+        //------------------------------------------------------------
+        
+        //FORMAS DE CREAR UNA FUNCION CORRECTAMENTE
+        gramatica.group("PARAMETROS", "300 (12 300)+");
+        gramatica.group("PARAMETRO", "300");        
+        gramatica.group("FUNCION", "201 300 18 (PARAMETRO | PARAMETROS)? 19 ", true);
+        
+        gramatica.group("LLAMAR_FUNCION", "300 18 (PARAMETRO | PARAMETROS)? 19 ", true);
+
+         //posibles errores al declarar una funcion        
+        gramatica.group("FUNCION", "201 300 (PARAMETRO | PARAMETROS)? 19 ", true,3,"ERROR_SINTACTICO: FALTA PARENTESIS ABIERTO [#, %]");
+        gramatica.group("FUNCION", "201 300 18 (PARAMETRO | PARAMETROS)? ", true,3,"ERROR_SINTACTICO: FALTA PARENTESIS CERRADO O UN PARAMETRO ESTA MAL DECLARADO [#, %]");
+        gramatica.group("FUNCION", "201 18 (PARAMETRO | PARAMETROS)? 19", true,3,"ERROR_SINTACTICO: FALTA NOMBRAR LA FUNCION [#, %]");
+
+        
+       /*
+        
+        //ERRORES ESTRUCTURAS DE CONTROL
+        gramatica.loopForFunExecUntilChangeNotDetected(()->{
+            gramatica.initialLineColumn();
+            gramatica.group("ESTRUCTURAS_CONTROL", "(INSTR_IF|INSTR_WHILE|FUNCION) 20 (ESTRUCTURAS_CONTROL|101|103|102)", true,4,"ERROR_SINTACTICO: FALTA LLAVE DE CIERRE [#, %]");
+            gramatica.group("ESTRUCTURAS_CONTROL", "(INSTR_IF|INSTR_WHILE|FUNCION) (ESTRUCTURAS_CONTROL|101|103|102) 21", true,4,"ERROR_SINTACTICO: FALTA LLAVE DE APERTURA [#, %]");
+            //gramatica.group("ESTRUCTURAS_CONTROL", "(INSTR_IF|INSTR_WHILE|FUNCION) 20", true,4,"ERROR_SINACTICO: FALTA LLAVE DE CIERRE [#, %]");
+            //gramatica.group("ESTRUCTURAS_CONTROL", "(INSTR_IF|INSTR_WHILE|FUNCION)  21", true,4,"ERROR_SINTACTICO: FALTA LLAVE DE ABERTURA [#, %]");
+            gramatica.finalLineColumn();
+        });
+        gramatica.delete(new String[]{"20","21"},16,"ERROR_SINTACTICO: LA LLAVE [] NO ESTA CONTENIDA EN ALGUNA GRUPACION");
+        gramatica.show();
+        */
+        
+        //gramatica.group("ESTRUCTURAS_CONTROL", "(INSTR_IF|INSTR_WHILE|FUNCION) 20 (INSTR_IF|INSTR_WHILE|FUNCION|VARIABLE) 21", true,4,"ERROR_SINTACTICO: FALTA LLAVE DE CIERRE [#, %]");
+   
+        //--------------------------------------------------------SEMANTICO------------------------------------------------------------------------------
+  
+        //gramatica.group("RESERV_INDEB", "101",2, "ERROR SEMANTICO \\{}: ERROR [#,%]");
+        //gramatica.group("RESERV_INDEB", "103",2, "ERROR SEMANTICO \\{}: ERROR [#,%]");
+        //gramatica.group("DIV_CERO", "3 0",2, "ERROR SEMANTICO \\{}: 3 ENTRE CERO[#,%]");
+
+        gramatica.show();
+         boolean sintacticoExitoso = errores.isEmpty();
+         return sintacticoExitoso;
     }
 
 private void analisisSemantico(){
+        HashMap<String,String> tiposDatos = new HashMap<>();
+        tiposDatos.put("27", "101");
+        tiposDatos.put("26", "103");
+        tiposDatos.put("28", "102");
+        tiposDatos.put("120", "104");
+        tiposDatos.put("121", "104");
+        int i = 0;
+        for(Production id: identProd){
+            //System.out.println(id.lexemeRank(0,-1)); //int x = 4 ;
+            //System.out.println(id.lexemeRank(1)); //x
+            //System.out.println(id.lexicalCompRank(0,-1)); //INT ID ASIGNACION NUMERO PUNTOCOMA
+            if (!identificador.containsKey(id.lexemeRank(1))){
+                identificador.put(id.lexemeRank(1), id.lexicalCompRank(0));
+                i++;
+            }
+            else {
+                errores.add(new ErrorLSSL(1,"Error semántico: Ya existe un identificador llamado "+id.lexemeRank(1),id,true));
+            }
+
+        }
+        System.out.println(Arrays.asList(identificador)); // muestra identificador
+        for (Production id: asigProd){
+            if (!identificador.containsKey(id.lexemeRank(0))){
+                errores.add(new ErrorLSSL(1,"Error semántico: Variable \""+id.lexemeRank(0)+"\" no declarada. [#, %]",id,true));
+            }
+            else{
+                if (!identificador.get(id.lexemeRank(0)).equals(tiposDatos.get(id.lexicalCompRank(2)))){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo "+identificador.get(id.lexemeRank(0)) +  " [#, %]",id,true));
+                   
+                }
+            }
+            
+        }
+        for (Production id: asigProdConID){
+            if (!identificador.containsKey(id.lexemeRank(0))||!identificador.containsKey(id.lexemeRank(2))){
+                errores.add(new ErrorLSSL(1,"Error semántico: Variable no declarada. [#, %]",id,true));
+            }
+            else{
+                if (!identificador.get(id.lexemeRank(0)).equals(identificador.get(id.lexemeRank(2)))){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo "+identificador.get(id.lexemeRank(0)) +  " [#, %]",id,true));
+                   
+                }
+            }
+            
+        }
+        //comparacion cuando ID está en la izquierda
+        for (Production id: compaProdIzq){
+
+            if (!identificador.containsKey(id.lexemeRank(0))){
+                errores.add(new ErrorLSSL(1,"Error semántico: Variable "+id.lexemeRank(0)+" no declarada. [#, %]",id,true));
+            }
+            else{
+                if (identificador.get(id.lexemeRank(0)).matches("102")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo STRING, imposible comparar [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(0)).matches("104")&&!id.lexicalCompRank(1).matches("IGUAL|DIFERENTE")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo BOOLEAN, sólo posible comparar con operadores IGUAL y DIFERENTE [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(0)).matches(""
+                        + "")&&!id.lexicalCompRank(2).matches("120|121")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo BOOLEAN, sólo posible comparar con valores booleanos [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(0)).matches("101|103")){
+                    if(!id.lexicalCompRank(2).matches("27|26|300")){
+                        errores.add(new ErrorLSSL(1,"Error semántico : Valor numérico de variable \""+id.lexemeRank(0)+"\" no se puede comparar con valor no numérico [#, %]",id,true));
+                    }
+                }
+                
+            
+            }
+            
+        }// FOR  COMPAPRODIZQ
         
+        for (Production id: compaProdDer){
+
+            if (!identificador.containsKey(id.lexemeRank(2))){
+                errores.add(new ErrorLSSL(1,"Error semántico: Variable "+id.lexemeRank(2)+" no declarada. [#, %]",id,true));
+            }
+            else{
+                if (identificador.get(id.lexemeRank(2)).matches("102")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(2)+"\" es de tipo STRING, imposible comparar [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(2)).matches("104")&&!id.lexicalCompRank(1).matches("IGUAL|DIFERENTE")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(2)+"\" es de tipo 104, sólo posible comparar con operadores IGUAL y DIFERENTE [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(2)).matches("104")&&!id.lexicalCompRank(0).matches("120|121")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(2)+"\" es de tipo BOOLEAN, sólo posible comparar con valores booleanos [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(2)).matches("101|103")){
+                    if(!id.lexicalCompRank(0).matches("27|26")){
+                        errores.add(new ErrorLSSL(1,"Error semántico : Valor numérico de variable \""+id.lexemeRank(2)+"\" no se puede comparar con valor no numérico [#, %]",id,true));
+                    }
+                }
+                
+            
+            }
+            
+        }// FOR  COMPAPRODDER
+        for (Production id: compaProdDoble){
+
+            if (!identificador.containsKey(id.lexemeRank(0))||!identificador.containsKey(id.lexemeRank(2))){
+                errores.add(new ErrorLSSL(1,"Error semántico: Variable "+id.lexemeRank(0)+" no declarada. [#, %]",id,true));
+            }
+            else{
+                if (identificador.get(id.lexemeRank(0)).matches("102")||identificador.get(id.lexemeRank(2)).matches("102")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo STRING, imposible comparar [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(0)).matches("104")&&!id.lexicalCompRank(1).matches("IGUAL|DIFERENTE")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo BOOLEAN, sólo posible comparar con operadores IGUAL y DIFERENTE [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(2)).matches("104")&&!id.lexicalCompRank(1).matches("IGUAL|DIFERENTE")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(2)+"\" es de tipo BOOLEAN, sólo posible comparar con operadores IGUAL y DIFERENTE [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(0)).matches("104")&&!identificador.get(id.lexemeRank(2)).matches("104")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo BOOLEAN, sólo posible comparar con valores booleanos [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(2)).matches("104")&&!identificador.get(id.lexemeRank(0)).matches("104")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(2)+"\" es de tipo BOOLEAN, sólo posible comparar con valores booleanos [#, %]",id,true));
+                }
+                if (identificador.get(id.lexemeRank(0)).matches("101|103")){
+                    if(!identificador.get(id.lexemeRank(2)).matches("101|103")){
+                        errores.add(new ErrorLSSL(1,"Error semántico : Valor numérico de variable \""+id.lexemeRank(0)+"\" no se puede comparar con valor no numérico [#, %]",id,true));
+                    }
+                }
+                if (identificador.get(id.lexemeRank(2)).matches("101|103")){
+                    if(!identificador.get(id.lexemeRank(0)).matches("101|103")){
+                        errores.add(new ErrorLSSL(1,"Error semántico : Valor numérico de variable \""+id.lexemeRank(0)+"\" no se puede comparar con valor no numérico [#, %]",id,true));
+                    }
+                }
+                
+            
+            }
+            
+        }// FOR  COMPAPRODdoble
+        for (Production id: operProdIzq){
+
+            if (!identificador.containsKey(id.lexemeRank(0))){
+                errores.add(new ErrorLSSL(1,"Error semántico: Variable "+id.lexemeRank(0)+" no declarada. [#, %]",id,true));
+            }
+            else{
+                if (identificador.get(id.lexemeRank(0)).matches("102|104")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo "+identificador.get(id.lexemeRank(0)) +", imposible hacer operaciones aritméticas [#, %]",id,true));
+                }
+      
+            }
+            if (identificador.get(id.lexemeRank(0)).matches("101")&& id.lexicalCompRank(1).matches("DIVISION")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : División en valor entero [#, %]",id,true));
+                }
+        }// FOR  OPERPRODIZQ
+        for (Production id: operProdDer){
+
+            if (!identificador.containsKey(id.lexemeRank(2))){
+                errores.add(new ErrorLSSL(1,"Error semántico: Variable "+id.lexemeRank(2)+" no declarada. [#, %]",id,true));
+            }
+            else{
+                if (identificador.get(id.lexemeRank(2)).matches("102|104")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(2)+"\" es de tipo "+identificador.get(id.lexemeRank(0)) +", imposible hacer operaciones aritméticas [#, %]",id,true));
+                }
+      
+            }
+            
+        }// FOR  OPERPRODDER
+        for (Production id: operProdDoble){
+
+            if (!identificador.containsKey(id.lexemeRank(0))||!identificador.containsKey(id.lexemeRank(2))){
+                errores.add(new ErrorLSSL(1,"Error semántico: Variable "+id.lexemeRank(0)+" no declarada. [#, %]",id,true));
+            }
+            else{
+                if (identificador.get(id.lexemeRank(0)).matches("102|104")||identificador.get(id.lexemeRank(2)).matches("102|104")){
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(0)+"\" es de tipo "+identificador.get(id.lexemeRank(0)) +", imposible hacer operaciones aritméticas [#, %]",id,true));
+                    errores.add(new ErrorLSSL(1,"Error semántico : Variable \""+id.lexemeRank(2)+"\" es de tipo "+identificador.get(id.lexemeRank(2)) +", imposible hacer operaciones aritméticas [#, %]",id,true));
+
+                }
+      
+            }
+            
+        }// FOR  OPERPRODDOBLE
     }
 
-private void generarTokens(){
-        tokens.forEach(token ->{
-            Object[] datos = new Object[]{
-                token.getLexicalComp(), token.getLexeme(), token.getLine()
-            };
-            Functions.addRowDataInTable(jTableID, datos);
-        });
+
+
+private void imprimirErrores(){
+    int sizeErrors = errores.size();
+        if (sizeErrors > 0) {
+            Functions.sortErrorsByLineAndColumn(errores);
+            String strErrors = "\n";
+            for (ErrorLSSL error : errores) {
+                String strError = String.valueOf(error);
+                strErrors += strError + "\n";
+            }
+            jTextCodigoSalida.setText("ERRORES \n" + strErrors + "\nLa compilación terminó con errores...");
+        } else {
+            jTextCodigoSalida.setText("Compilación terminada...");
+        }
+        jTextCodigoSalida.setCaretPosition(0);
     }
+    
 
 }
-
-
