@@ -459,6 +459,8 @@ public class IDE extends javax.swing.JFrame {
         // TODO add your handling code here:
         directorio.New();
         limpiar();
+        btnSemantico.setEnabled(false);
+        btnSintactico.setEnabled(false);
     }//GEN-LAST:event_NuevoActionPerformed
 
     /**
